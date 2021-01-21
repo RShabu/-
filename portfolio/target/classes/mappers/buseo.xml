@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="buseo">
+	<select id="getBuseoList" resultType="buseovo">
+		SELECT buseo_id, buseo_name FROM grp_buseo GROUP BY buseo_grp
+	</select>
+</mapper>

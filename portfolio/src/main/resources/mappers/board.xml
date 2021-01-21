@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board">
+
+	<insert id="setBoard" parameterType="boardvo">
+		INSERT INTO grp_board SET 
+		boardGroup		 = #{boardGroup},
+		boardCode		 = #{boardCode},
+		boardColor		 = #{boardColor},
+		boardMaker		 = #{boardMaker},
+		boardTitle		 = #{boardTitle},
+		boardRead		 = #{boardRead},
+		boardWrite		 = #{boardWrite},
+		boardReply		 = #{boardReply},
+		boardDownload	 = #{boardDownload},
+		boardType		 = #{boardType},
+		boardRegdate	 = now()
+	</insert>
+	
+	<sql id="search">
+		<choose>
+			<when test = "searchOpt == 'all'">
+				WHERE boardCode LIKE CONCAT('%', #{words}, '%') 
+				OR boardGroup LIKE CONCAT('%', #{words}, '%')
+			</when>
+			<otherwise> 
+				WHERE ${searchOpt} LIKE CONCAT('%', #{words}, '%')
+			</otherwise>
+		</choose>
+	</sql>
+
+	<select id="getBoardList" parameterType="hashMap" resultType="boardvo">
+		SELECT * FROM grp_board A, grp_buseo B 
+		<include refid="search"></include> AND A.boardGroup = B.buseo_id 
+		ORDER by boardid DESC LIMIT #{start}, #{end}
+	</select>
+
+	<select id="getBoardOne" resultType="boardvo">
+		SELECT * FROM grp_board_${boardCode} WHERE boardid = #{boardid}
+	</select>
+
+	<delete id="setBoardDelete" parameterType="String">
+		DELETE FROM grp_board WHERE boardCode = #{boardCode}
+	</delete>
+	
+	<select id="getBoardCount" resultType="int">
+		SELECT COUNT(*) FROM grp_board;
+	</select> 
+	
+	<insert id="createArticleTbl">
+		${str}
+	</insert>
+
+	<insert id="createCommentTbl">
+		${str}
+	</insert>
+</mapper>

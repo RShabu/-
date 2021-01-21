@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="employee">
+	
+	<sql id="search">
+		<choose>
+			<when test="words == ''"></when>
+			<when test="searchOpt=='all'">
+				AND (empName LIKE CONCAT('%', #{words},'%') OR 
+				empNum LIKE CONCAT('%', #{words},'%'))
+			</when>
+			<otherwise>
+				AND ${searchOpt} = #{words}
+			</otherwise>		
+		</choose>
+	</sql>
+	
+	<!-- SELECT * FROM TABLE_NAME WHERE COLUMN_NAME LIKE CONCAT(‘%’, #{words}, ‘%’) -->
+	<!-- WHERE column LIKE CONCAT('%',#{param},'%') -->
+	<select id="getEmpList" resultType="employeevo">
+		SELECT 
+		emp_id AS empID, 
+		empBuseoCode,
+		buseo_name AS empBuseoName,
+		empGradeCode,
+		grade_name AS empGradeName,
+		empNum,
+		empName,
+		empEnter,
+		empRegdate,
+		empConfirm,
+		empStep,
+		empHead,
+		empAuth 
+		FROM grp_employee E,
+		grp_buseo B, grp_grade G 
+		WHERE E.empBuseoCode = B.buseo_id AND E.empGradeCode = G.grade_id ORDER BY emp_id DESC LIMIT #{start}, #{end}
+	</select>
+	
+	<select id="getEmpCount" resultType="int">
+		SELECT COUNT(emp_id) FROM grp_employee E,grp_buseo B, grp_grade G 
+		WHERE E.empBuseoCode = B.buseo_id AND E.empGradeCode = G.grade_id <include refid="search"></include>
+	</select>
+		
+	<select id="getEmployeeOne" parameterType="String" resultType="employeevo">
+		SELECT 
+			empGender 		= #{empGender},
+			empBirth 		= #{empBirth}, 
+			empCP 			= #{empCP}, 
+			empIn 			= #{empIn}, 
+			empTel 			= #{empTel}, 
+			empRecruit 		= #{empRecruit}, 
+			empHope	 		= #{empHope}, 
+			empHeight		= #{empHeight}, 
+			empWeight 		= #{empWeight}, 
+			empMilitaryService	= #{empMilitaryService}, 
+			empReligion		= #{empReligion}, 
+			empHobby		= #{empHobby}, 
+			empSpeciality 	= #{empSpeciality}, 
+			empDisability	= #{empDisability}, 
+			empReward		= #{empReward}, 
+			empMarried		= #{empMarried}, 
+			empLicense1		= #{empLicense1}, 
+			empLicense2		= #{empLicense2}, 
+			empLicense3		= #{empLicense3},
+			empLicense4		= #{empLicense4},
+			empLicense5		= #{empLicense5}, 
+			empLang1		= #{empLang1}, 
+			empLang2		= #{empLang2},
+			empLang3		= #{empLang3},
+			empLang4		= #{empLang4},
+			empLang5		= #{empLang5}, 
+			empRnp1			= #{empRnp1},
+			empRnp2			= #{empRnp2},
+			empRnp3			= #{empRnp3},
+			empRnp4			= #{empRnp4},
+			empRnp5			= #{empRnp5},
+			empComment		= #{empComment}
+			from grp_employee_others
+	</select>
+
+	<select id="getEmpOne" resultType="employeevo" parameterType="int">
+		SELECT 
+		emp_id as empID,
+		empBuseoCode,
+		empGradeCode,
+		empNum,
+		empPwd,
+		empName,
+		empEnter,
+		empRegdate,
+		empConfirm,
+		empStep,
+		empHead,
+		empAuth 
+		FROM grp_employee WHERE emp_id = #{empID}
+	</select>
+</mapper>
