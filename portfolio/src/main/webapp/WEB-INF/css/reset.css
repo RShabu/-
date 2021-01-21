@@ -1,0 +1,38 @@
+@charset 'utf-8';
+@import url('https://fonts.googleapis.com/css2?family=Catamaran:wght@300;500;700&display=swap');
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    color: #000;
+}
+
+a {
+    text-decoration: none;
+    list-style: none;
+}
+
+input, button, hr{
+    border: 0;
+    outline: 0;
+    vertical-align: top;
+}
+
+select, input, textarea, button {
+    vertical-align: top;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse; /*두줄 한줄처럼*/
+}
+
+input[type='checkbox'] {
+    width: 18px;
+    height: 18px;
+}

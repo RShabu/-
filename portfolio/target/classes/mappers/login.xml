@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="login">
+	<select id="loginCheck" resultType="loginvo">
+		SELECT 
+		empBuseoCode,  
+		empGradeCode, 
+		empNum, 
+		empName, 
+		empConfirm,
+		empBuseoName, 
+		empGradeName,
+		empAuth 
+		FROM 
+		grp_employee LEFT JOIN grp_buseo ON emp_buseo = buseo_id 
+		LEFT JOIN grp_grade ON emp_grade = grade_id 
+		WHERE empNum = #{empNum} AND empPwd = #{empPwd}
+	</select>
+</mapper>
