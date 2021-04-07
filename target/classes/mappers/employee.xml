@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="employee">
+	
+	<sql id="search">
+		<choose>
+			<when test="words == ''"></when>
+			<when test="searchOpt=='all'">
+				AND (empName LIKE CONCAT('%', #{words},'%') OR 
+				empNum LIKE CONCAT('%', #{words},'%'))
+			</when>
+			<otherwise>
+				AND ${searchOpt} = #{words}
+			</otherwise>		
+		</choose>
+	</sql>
+	
+	<!-- SELECT * FROM TABLE_NAME WHERE COLUMN_NAME LIKE CONCAT(‘%’, #{words}, ‘%’) -->
+	<!-- WHERE column LIKE CONCAT('%',#{param},'%') -->
+	<select id="getEmpList" resultType="employeevo">
+		SELECT 
+		empID,
+		empBuseoCode,
+		buseo_name AS empBuseoName,
+		empGradeCode,
+		grade_name AS empGradeName,
+		empNum,
+		empName,
+		empEnter,
+		empRegdate,
+		empConfirm,
+		empStep,
+		empHead,
+		empAuth 
+		FROM grp_employee E,
+		grp_buseo B, grp_grade G 
+		WHERE E.empBuseoCode = B.buseo_id AND E.empGradeCode = G.grade_id ORDER BY empID DESC LIMIT #{start}, #{end}
+	</select>
+	
+	<select id="getEmpCount" resultType="int">
+		SELECT COUNT(empID) FROM grp_employee E,grp_buseo B, grp_grade G 
+		WHERE E.empBuseoCode = B.buseo_id AND E.empGradeCode = G.grade_id <include refid="search"></include>
+	</select>
+		
+ 	<select id="getEmpBuseo" resultType="employeevo">
+		SELECT buseo_name AS empBuseoName from grp_employee E, grp_buseo B where E.empNum = #{empNum} AND E.empBuseoCode = B.buseo_id;
+	</select>
+	
+	
+	<select id="getEmpOne" resultType="employeevo">
+		<!-- SELECT * FROM grp_employee WHERE empID = #{empID} -->
+		<!-- SELECT 
+		empID,
+		buseo_name AS empBuseoName,
+		empBuseoCode,
+		grade_name AS empGradeName,
+		empGradeCode,
+		empNum,
+		empName,
+		empEnter,
+		empRegdate
+		FROM grp_employee E, grp_buseo B, grp_grade G WHERE E.empBuseoCode = B.buseo_id AND 
+		E.empGradeCode = G.grade_id AND E.empID = #{empID} -->
+		SELECT E.*,
+		buseo_name AS empBuseoName,
+		grade_name AS empGradeName
+		FROM grp_employee E, grp_buseo B, grp_grade G WHERE E.empBuseoCode = B.buseo_id AND 
+		E.empGradeCode = G.grade_id AND E.empID = #{empID}
+	</select>
+	
+	<select id="getEmpOthersOne" resultType="employeevo">
+		SELECT E.*, EO.*, buseo_name AS empBuseoName, 
+		grade_name AS empGradeName from grp_employee E, 
+		grp_employee_others EO, grp_buseo B, grp_grade G 
+		WHERE EO.empNum = #{empNum} AND E.empBuseoCode = B.buseo_id AND E.empGradeCode = G.grade_id AND E.empID = #{empID}
+	</select>
+	
+	<select id="getEmpOthersOneTest" resultType="employeevo">
+		SELECT EO.* from grp_employee E,grp_employee_others EO
+		WHERE EO.empNum = #{empNum} AND E.empID = #{empID}
+	</select>
+	
+	<!-- select E.empNum, E.empID, EO.empCP from grp_employee AS E inner join grp_employee_others AS EO ON E.empNum = EO.empNum; -->
+
+	<update id = "setEmpAuthChange" parameterType="hashmap">
+		UPDATE grp_employee SET empAuth = #{auth} WHERE empNum = #{empNum}
+	</update>
+	
+	<update id = "setEmpHeadChange" parameterType="hashmap">
+		UPDATE grp_employee SET empHead = #{headType} WHERE empNum = #{empNum}
+	</update>
+	
+	<update id = "setEmpConfirmChange" parameterType="hashmap">
+		UPDATE grp_employee SET empConfirm = #{confirmType} WHERE empNum = #{empNum}
+	</update>
+	
+	<delete id = "setEmpDeleteOne" parameterType="String">
+		DELETE FROM grp_employee where empNum = #{empNum}
+	</delete>
+	
+	<delete id = "setEmpDeleteAll" parameterType="int">
+		DELETE FROM grp_employee WHERE empID = #{empID}
+	</delete>
+	
+	<update id = "setEmpModify" parameterType="hashmap">
+		UPDATE grp_employee SET 
+			empName		= #{empName},
+			empBuseoCode = #{empBuseoCode},
+			empGradeCode = #{empGradeCode} 
+		WHERE empID = #{empID}
+	</update>
+</mapper>

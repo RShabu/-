@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<typeAliases>
+		<!-- type 실제 경로  alias 별명 -->
+		<typeAlias alias="boardvo" type="com.project.portfolio.model.BoardVO"/>
+		<typeAlias alias="articlevo" type="com.project.portfolio.model.ArticleVO"/>
+		<typeAlias alias="gradevo" type="com.project.portfolio.model.GradeVO"/>
+		<typeAlias alias="buseovo" type="com.project.portfolio.model.BuseoVO"/>
+		<typeAlias alias="calendarvo" type="com.project.portfolio.model.CalendarVO"/>
+		<typeAlias alias="companyvo" type="com.project.portfolio.model.CompanyVO"/>
+		<typeAlias alias="employeevo" type="com.project.portfolio.model.EmployeeVO"/>
+		<typeAlias alias="loginvo" type="com.project.portfolio.model.EmployeeVO"/>
+		<typeAlias alias="commentvo" type="com.project.portfolio.model.CommentVO"/>
+		
+	</typeAliases>
+
+</configuration>
+
+
+
+
+
+

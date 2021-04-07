@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="article">
+
+	<sql id="search">
+		<choose>
+			<when test = "searchOpt == 'all'">
+				WHERE subject LIKE CONCAT('%', #{words}, '%') 
+				OR writer LIKE CONCAT('%', #{words}, '%') 
+				OR content LIKE CONCAT('%', #{words}, '%')
+			</when>
+			<otherwise> 
+				WHERE ${searchOpt} LIKE CONCAT('%', #{words}, '%')
+			</otherwise>
+		</choose>
+	</sql>
+	
+	<select id="getArticleList" parameterType="hashMap" resultType="articlevo">
+		SELECT 
+				division, articleid, subject, writer, hit, fileOriName, ref, re_step, re_level, date_format(regdate, '%Y-%m-%d') as regdate,
+				(SELECT count(*) FROM grp_comment_${boardCode} c WHERE c.articleid = a.articleid ) AS cnt 
+		FROM grp_article_${boardCode} a 
+		<include refid = "search"></include>
+		ORDER BY division DESC, ref DESC, re_step ASC LIMIT #{start}, #{end}
+	</select>
+	
+	<select id="getArticleCount"  resultType="int">
+		SELECT COUNT(*) FROM grp_article_${boardCode} 
+	</select>
+	
+	<insert id="setArticle" >
+	
+		<selectKey resultType="int" keyProperty="ref" order="BEFORE">
+			SELECT IFNULL(MAX(ref), 0) + 1 FROM grp_article_${boardCode}
+		</selectKey>
+		
+		INSERT INTO grp_article_${boardCode} 
+		SET division = #{division}, subject = #{subject}, content = #{content}, writer = #{writer}, regdate = NOW(), 
+		fileName = #{fileName}, fileOriName = #{fileOriName}, fileUrl = #{fileUrl},
+		ref = #{ref}, re_step = 0, re_level = 0
+	</insert>
+	
+	<select id="getArticleOne" resultType="articlevo">
+		SELECT * FROM grp_article_${boardCode} WHERE articleid = #{articleid}
+	</select>
+	
+	<update id="hitUp">
+		UPDATE grp_article_${boardCode} SET hit = hit + 1 WHERE articleid = #{articleid}
+	</update>
+	
+	<update id="setArticleModify">
+		UPDATE grp_article_${boardCode} SET 
+			division = #{division},
+			subject = #{subject},
+			writer = #{writer},
+			content = #{content} 
+		WHERE articleid = #{articleid}
+	</update>
+	
+	<delete id="setArticleDelete" parameterType="hashMap">
+		DELETE FROM grp_article_${boardCode} WHERE articleid = #{articleid}
+	</delete>
+	
+	<select id="getBoardOne" resultType="boardvo">
+		SELECT * FROM grp_board WHERE boardCode = #{boardCode}
+	</select>
+	
+	<delete id="setArticleDeleteAll">
+		DELETE FROM grp_article_${boardCode} WHERE articleid = #{articleid}
+	</delete>
+	
+	<select id="getArticleReplyInfo" resultType="articlevo">
+		SELECT articleid, ref, re_step, re_level
+	    FROM grp_article_${boardCode}
+	    WHERE articleid = #{articleid}
+	</select>
+	
+	<update id="setArticleRef" parameterType="articlevo">
+		UPDATE grp_article_${boardCode}
+		   SET re_step = re_step + 1, regdate = NOW()
+		 WHERE ref = #{ref} AND re_step > #{re_step}	
+	</update>
+	
+	<insert id="setArticleReply" >	
+		INSERT INTO grp_article_${boardCode} 
+		SET division=#{division},subject = #{subject}, content = #{content}, writer = #{writer}, regdate = NOW(), 
+		fileName = #{fileName}, fileOriName = #{fileOriName}, fileUrl = #{fileUrl},
+		ref = #{ref}, re_step = #{re_step} + 1, re_level = #{re_step} + 1
+	</insert>
+	
+	<select id="getAdminArticle" parameterType="hashMap" resultType="articlevo">
+		SELECT 
+				division, articleid, subject, writer, hit, fileOriName, ref, re_step, re_level, date_format(regdate, '%Y-%m-%d') as regdate,
+				(SELECT count(*) FROM grp_comment_${boardCode} c WHERE c.articleid = a.articleid ) AS cnt 
+		FROM grp_article_${boardCode} a 
+		<include refid = "search"></include>
+		ORDER BY division DESC, ref DESC, re_step ASC
+	</select>
+</mapper>

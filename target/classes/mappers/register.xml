@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="register">
+	
+	<insert id="setEmpRegister" parameterType="employeevo">
+		<selectKey resultType="int" keyProperty="ref" order="BEFORE">
+			SELECT IFNULL(MAX(empID), 1) FROM grp_employee
+		</selectKey>
+	
+			INSERT INTO grp_employee SET 
+			empBuseoCode 	= #{empBuseoCode},
+			empGradeCode 	= #{empGradeCode},
+			empNum		 	= CONCAT(#{empNum}, #{ref}),
+			empName		 	= #{empName},
+			empPwd 			= #{empPwd},
+			empEnter		= #{empEnter},
+			empStep			= #{empStep},
+			empRegdate 		= now(),
+			empPhoto		= #{empPhoto}
+	</insert>
+	
+	<insert id = "setEmpRegisterOthers" parameterType="employeevo">
+		INSERT INTO grp_employee_others SET 
+			empGender 		= #{empGender},
+			empBirth 		= #{empBirth}, 
+			empCP 			= #{empCP}, 
+			empIn 			= #{empIn}, 
+			empTel 			= #{empTel}, 
+			empRecruit 		= #{empRecruit}, 
+			empHope	 		= #{empHope}, 
+			empHeight		= #{empHeight}, 
+			empWeight 		= #{empWeight}, 
+			empMilitaryService	= #{empMilitaryService}, 
+			empReligion		= #{empReligion}, 
+			empHobby		= #{empHobby}, 
+			empSpeciality 	= #{empSpeciality}, 
+			empDisability	= #{empDisability}, 
+			empReward		= #{empReward}, 
+			empMarried		= #{empMarried}, 
+			empLicense1		= #{empLicense1}, 
+			empLicense2		= #{empLicense2}, 
+			empLicense3		= #{empLicense3},
+			empLicense4		= #{empLicense4},
+			empLicense5		= #{empLicense5}, 
+			empLang1		= #{empLang1}, 
+			empLang2		= #{empLang2},
+			empLang3		= #{empLang3},
+			empLang4		= #{empLang4},
+			empLang5		= #{empLang5}, 
+			empRnp1			= #{empRnp1},
+			empRnp2			= #{empRnp2},
+			empRnp3			= #{empRnp3},
+			empRnp4			= #{empRnp4},
+			empRnp5			= #{empRnp5},
+			empComment		= #{empComment}
+			
+	</insert>
+
+	<select id = "getEmpRegisterOthers" parameterType="int" resultType="employeevo">
+			SELECT 
+			empGender 		= #{empGender},
+			empBirth 		= #{empBirth}, 
+			empCP 			= #{empCP}, 
+			empIn 			= #{empIn}, 
+			empTel 			= #{empTel}, 
+			empRecruit 		= #{empRecruit}, 
+			empHope	 		= #{empHope}, 
+			empHeight		= #{empHeight}, 
+			empWeight 		= #{empWeight}, 
+			empMilitaryService	= #{empMilitaryService}, 
+			empReligion		= #{empReligion}, 
+			empHobby		= #{empHobby}, 
+			empSpeciality 	= #{empSpeciality}, 
+			empDisability	= #{empDisability}, 
+			empReward		= #{empReward}, 
+			empMarried		= #{empMarried}, 
+			empLicense1		= #{empLicense1}, 
+			empLicense2		= #{empLicense2}, 
+			empLicense3		= #{empLicense3},
+			empLicense4		= #{empLicense4},
+			empLicense5		= #{empLicense5}, 
+			empLang1		= #{empLang1}, 
+			empLang2		= #{empLang2},
+			empLang3		= #{empLang3},
+			empLang4		= #{empLang4},
+			empLang5		= #{empLang5}, 
+			empRnp1			= #{empRnp1},
+			empRnp2			= #{empRnp2},
+			empRnp3			= #{empRnp3},
+			empRnp4			= #{empRnp4},
+			empRnp5			= #{empRnp5},
+			empComment		= #{empComment}
+			from grp_employee_others;
+	</select>
+	
+	<select id="getEmpNumCheck" parameterType="hashmap" resultType="int">
+		SELECT COUNT(empID) FROM grp_employee WHERE empNum = #{empNum} AND empPwd = #{empPwd}
+	</select>
+	
+	<select id="getEmpInfo" parameterType="hashmap" resultType="employeevo">
+		SELECT * FROM grp_employee LEFT JOIN grp_buseo ON empBuseoCode = buseo_id 
+		LEFT JOIN grp_grade ON empGradeCode = grade_id 	
+		WHERE empNum = #{empNum} AND empPwd = #{empPwd}
+	</select>
+</mapper>
